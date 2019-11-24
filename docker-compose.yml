@@ -2,9 +2,9 @@ version: '3'
 services:
 
   api-gateway:
-    build: .
+    build: api-gateway
     ports:
-      - "5000:8080"
+    - "8080:5000"
     environment:
       USERS_ENDPOINT: "http://localhost:5001"
       STORIES_ENDPOINT: ""
@@ -13,12 +13,12 @@ services:
       AUTH_ENDPOINT: "http://localhost:5005"
 
   users:
-    build: .
-      ports:
-      - "5001:5001"
+    build: users
+    ports:
+    - "5001:5000"
 
   auth:
-    build: .
+    build: auth
     ports:
     -  "5005:5005"
     environment:
