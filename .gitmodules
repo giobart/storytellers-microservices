@@ -1,0 +1,9 @@
+[submodule "users"]
+	path = users
+	url = https://github.com/cardiamc/user-microservice
+[submodule "auth"]
+	path = auth
+	url = https://github.com/giobart/storytellers-auth-service
+[submodule "api-gateway"]
+	path = api-gateway
+	url = https://github.com/ShinKage/gateway-microservice
