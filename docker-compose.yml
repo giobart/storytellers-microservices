@@ -4,24 +4,29 @@ services:
   api-gateway:
     build: api-gateway
     ports:
-    - "8081:5000"
+    - "8081:8081"
     environment:
-      USERS_ENDPOINT: "http://localhost:5001"
+      USERS_ENDPOINT: "http://users:5001"
       STORIES_ENDPOINT: ""
       REACTIONS_ENDPOINT: ""
       STATISTICS_ENDPOINT: ""
-      AUTH_ENDPOINT: "http://localhost:5005"
+      AUTH_ENDPOINT: "http://auth:5005"
+    links:
+      - auth
+      - users
 
   users:
     build: users
     ports:
-    - "5001:5000"
+    - "5001:5001"
 
   auth:
     build: auth
     ports:
-    -  "5005:5000"
+    -  "5005:5005"
     environment:
-      USERS_API: "http://localhost:5001"
+      USERS_API: "http://users:5001"
+    links:
+      - users
 
 
