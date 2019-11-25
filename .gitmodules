@@ -13,3 +13,6 @@
 [submodule "stories"]
 	path = stories
 	url = https://github.com/alessandrodgr/stories-microservice
+[submodule "reactions"]
+	path = reactions
+	url = https://github.com/laurab1/Storytellers-Reactions/
