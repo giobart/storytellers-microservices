@@ -6,11 +6,11 @@ services:
     ports:
     - "8081:8081"
     environment:
-      USERS_ENDPOINT: "http://users:5001"
-      STORIES_ENDPOINT: ""
-      REACTIONS_ENDPOINT: ""
-      STATISTICS_ENDPOINT: ""
-      AUTH_ENDPOINT: "http://auth:5005"
+      USERS_API: "http://users:5001"
+      STORIES_API: ""
+      REACTIONS_API: ""
+      STATISTICS_API: ""
+      AUTH_API: "http://auth:5005"
     links:
       - auth
       - users
