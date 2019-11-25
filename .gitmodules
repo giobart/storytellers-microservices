@@ -7,3 +7,12 @@
 [submodule "api-gateway"]
 	path = api-gateway
 	url = https://github.com/ShinKage/gateway-microservice
+[submodule "statistics"]
+	path = statistics
+	url = https://github.com/deRemo/stats-microservice
+[submodule "stories"]
+	path = stories
+	url = https://github.com/alessandrodgr/stories-microservice
+[submodule "reactions"]
+	path = reactions
+	url = https://github.com/laurab1/Storytellers-Reactions/
