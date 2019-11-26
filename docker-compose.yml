@@ -10,13 +10,14 @@ services:
     environment:
       FLASK_PORT: "8082"
       USERS_API: "http://users:5001"
-      STORIES_API: ""
+      STORIES_API: "http://stories:5002"
       REACTIONS_API: ""
       STATISTICS_API: ""
       AUTH_API: "http://auth:5005"
     links:
       - auth
       - users
+      - stories
 
   api-gateway2:
     build: api-gateway
