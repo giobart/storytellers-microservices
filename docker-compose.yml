@@ -4,11 +4,11 @@ services:
   api-gateway1:
     build: api-gateway
     ports:
-      - "8081:8081"
+      - "8082:8082"
     expose:
-      - "8081"
+      - "8082"
     environment:
-      FLASK_PORT: "8081"
+      FLASK_PORT: "8082"
       USERS_API: "http://users:5001"
       STORIES_API: ""
       REACTIONS_API: ""
@@ -21,11 +21,11 @@ services:
   api-gateway2:
     build: api-gateway
     ports:
-      - "8082:8082"
+      - "8083:8083"
     expose:
-      - "8082"
+      - "8083"
     environment:
-      FLASK_PORT: "8082"
+      FLASK_PORT: "8083"
       USERS_API: "http://users:5001"
       STORIES_API: ""
       REACTIONS_API: ""
@@ -61,10 +61,10 @@ services:
     links:
       - users
 
-  nginx:
+  nginx-gateway:
     build: ./nginx
     links:
       - api-gateway1
       - api-gateway2
     ports:
-      - '8080:8080'
+      - '8081:8081'
