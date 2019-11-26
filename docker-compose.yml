@@ -27,13 +27,14 @@ services:
     environment:
       FLASK_PORT: "8083"
       USERS_API: "http://users:5001"
-      STORIES_API: ""
+      STORIES_API: "http://stories:5002"
       REACTIONS_API: ""
       STATISTICS_API: ""
       AUTH_API: "http://auth:5005"
     links:
       - auth
       - users
+      - stories
 
   users:
     build: users
@@ -58,6 +59,16 @@ services:
       REACTIONS_API: ""
       STATISTICS_API: ""
       AUTH_API: "http://auth:5005"
+    links:
+      - users
+
+  stories:
+    build: stories
+    ports:
+      - "5002:5002"
+    environment:
+      USERS_API: "http://users:5001"
+
     links:
       - users
 
