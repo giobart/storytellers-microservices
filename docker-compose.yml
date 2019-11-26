@@ -11,13 +11,14 @@ services:
       FLASK_PORT: "8082"
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
-      REACTIONS_API: ""
+      REACTIONS_API: "http://reactions:5003"
       STATISTICS_API: ""
       AUTH_API: "http://auth:5005"
     links:
       - auth
       - users
       - stories
+      - reactions
 
   api-gateway2:
     build: api-gateway
@@ -29,13 +30,14 @@ services:
       FLASK_PORT: "8083"
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
-      REACTIONS_API: ""
+      REACTIONS_API: "http://reactions:5003"
       STATISTICS_API: ""
       AUTH_API: "http://auth:5005"
     links:
       - auth
       - users
       - stories
+      - reactions
 
   users:
     build: users
@@ -43,7 +45,7 @@ services:
       FLASK_PORT: "5005"
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
-      REACTIONS_API: ""
+      REACTIONS_API: "http://reactions:5003"
       STATISTICS_API: ""
       AUTH_API: "http://auth:5005"
     ports:
@@ -57,7 +59,7 @@ services:
       FLASK_PORT: "5005"
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
-      REACTIONS_API: ""
+      REACTIONS_API: "http://reactions:5003"
       STATISTICS_API: ""
       AUTH_API: "http://auth:5005"
     links:
@@ -69,9 +71,11 @@ services:
       - "5002:5002"
     environment:
       USERS_API: "http://users:5001"
+      REACTIONS_API: "http://reactions:5003"
 
     links:
       - users
+      - redis
 
   nginx-gateway:
     build: ./nginx
@@ -89,9 +93,16 @@ services:
       FLASK_PORT: "5005"
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
-      REACTIONS_API: ""
+      REACTIONS_API: "http://reactions:5003"
       STATISTICS_API: ""
       AUTH_API: "http://auth:5005"
+      REDIS_URL: "redis://redis:6379/0"
     links:
       - users
       - stories
+      - redis
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
