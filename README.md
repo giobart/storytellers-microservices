@@ -8,11 +8,6 @@ The project is composed by the following services:
 - reactions
 - story
 - statistics/search
-- mail & telegram
-
-# Architecture
-
-![](files/architecture.png)
 
 # Clone the repo
 
@@ -28,3 +23,10 @@ Pull changes:
 ```
 git submodule update --init --recursive
 ```
+# Deploy the services
+
+```
+docker-compose up
+```
+
+Frontend is accessible at `localhost:8080`. Raw API Gateway accessible at `localhost:8081`.
