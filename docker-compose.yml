@@ -12,9 +12,10 @@ services:
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
       REACTIONS_API: "http://reactions:5003"
-      STATISTICS_API: ""
+      STATISTICS_API: "http://statistics:5004"
       AUTH_API: "http://auth:5005"
     links:
+      - statistics
       - auth
       - users
       - stories
@@ -31,9 +32,10 @@ services:
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
       REACTIONS_API: "http://reactions:5003"
-      STATISTICS_API: ""
+      STATISTICS_API: "http://statistics:5004"
       AUTH_API: "http://auth:5005"
     links:
+      - statistics
       - auth
       - users
       - stories
@@ -41,12 +43,14 @@ services:
 
   users:
     build: users
+    expose:
+      - "5001"
     environment:
       FLASK_PORT: "5005"
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
       REACTIONS_API: "http://reactions:5003"
-      STATISTICS_API: ""
+      STATISTICS_API: "http://statistics:5004"
       AUTH_API: "http://auth:5005"
     ports:
     - "5001:5001"
@@ -54,13 +58,15 @@ services:
   auth:
     build: auth
     ports:
-    -  "5005:5005"
+      - "5005:5005"
+    expose:
+      - "5005"
     environment:
       FLASK_PORT: "5005"
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
       REACTIONS_API: "http://reactions:5003"
-      STATISTICS_API: ""
+      STATISTICS_API: "http://statistics:5004"
       AUTH_API: "http://auth:5005"
     links:
       - users
@@ -69,13 +75,18 @@ services:
     build: stories
     ports:
       - "5002:5002"
+    expose:
+      - "5002"
     environment:
       USERS_API: "http://users:5001"
+      STORIES_API: "http://stories:5002"
       REACTIONS_API: "http://reactions:5003"
-
+      STATISTICS_API: "http://statistics:5004"
+      AUTH_API: "http://auth:5005"
+      REDIS_URL: "redis://redis-queue:6379/0"
     links:
       - users
-      - redis
+      - redis-queue
 
   nginx-gateway:
     build: ./nginx
@@ -89,20 +100,106 @@ services:
     build: ./reactions
     ports:
       - "5003:5003"
+    expose:
+      - "5003"
     environment:
-      FLASK_PORT: "5005"
+      FLASK_PORT: "5003"
       USERS_API: "http://users:5001"
       STORIES_API: "http://stories:5002"
       REACTIONS_API: "http://reactions:5003"
-      STATISTICS_API: ""
+      STATISTICS_API: "http://statistics:5004"
       AUTH_API: "http://auth:5005"
-      REDIS_URL: "redis://redis:6379/0"
+      REDIS_URL: "redis://redis-queue:6379/0"
     links:
       - users
       - stories
-      - redis
+      - redis-queue
 
-  redis:
+  statistics:
+    build: statistics
+    ports:
+      - "5004:5004"
+    expose:
+      - "5004"
+    environment:
+      FLASK_PORT: "5004"
+      USERS_API: "http://users:5001"
+      STORIES_API: "http://stories:5002"
+      REACTIONS_API: "http://reactions:5003"
+      STATISTICS_API: "http://statistics:5004"
+      AUTH_API: "http://auth:5005"
+      REDIS_URL: "redis://redis-queue:6379/0"
+    links:
+      - stories
+      - users
+
+  reactions-beat:
+    build: reactions
+    command: "python celery_entry.py beat --loglevel=INFO --pidfile=celery-reactions.pid"
+    environment:
+      USERS_API: "http://users:5001"
+      STORIES_API: "http://stories:5002"
+      REACTIONS_API: "http://reactions:5003"
+      STATISTICS_API: "http://statistics:5004"
+      AUTH_API: "http://auth:5005"
+      REDIS_URL: "redis://redis-queue:6379/0"
+    links:
+      - stories
+      - users
+      - redis-queue
+
+  reactions-worker:
+    build: reactions
+    command: "python celery_entry.py worker --loglevel=INFO"
+    environment:
+      USERS_API: "http://users:5001"
+      STORIES_API: "http://stories:5002"
+      REACTIONS_API: "http://reactions:5003"
+      STATISTICS_API: "http://statistics:5004"
+      AUTH_API: "http://auth:5005"
+      REDIS_URL: "redis://redis-queue:6379/0"
+    depends_on:
+      - reactions-beat
+    links:
+      - stories
+      - users
+      - redis-queue
+
+  statistics-beat:
+    build: statistics
+    command: "python celery_entry.py beat --loglevel=INFO --pidfile=celery-statistics.pid"
+    environment:
+      USERS_API: "http://users:5001"
+      STORIES_API: "http://stories:5002"
+      REACTIONS_API: "http://reactions:5003"
+      STATISTICS_API: "http://statistics:5004"
+      AUTH_API: "http://auth:5005"
+      REDIS_URL: "redis://redis-queue:6379/0"
+    links:
+      - stories
+      - users
+      - redis-queue
+
+  statistics-worker:
+    build: statistics
+    command: "python celery_entry.py worker --loglevel=INFO"
+    environment:
+      USERS_API: "http://users:5001"
+      STORIES_API: "http://stories:5002"
+      REACTIONS_API: "http://reactions:5003"
+      STATISTICS_API: "http://statistics:5004"
+      AUTH_API: "http://auth:5005"
+      REDIS_URL: "redis://redis-queue:6379/0"
+    depends_on:
+      - statistics-beat
+    links:
+      - stories
+      - users
+      - redis-queue
+
+  redis-queue:
     image: "redis:latest"
+    expose:
+      - "6379"
     ports:
       - "6379:6379"
