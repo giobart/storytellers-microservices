@@ -16,3 +16,6 @@
 [submodule "reactions"]
 	path = reactions
 	url = https://github.com/laurab1/Storytellers-Reactions/
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/giobart/storytellers-fe
